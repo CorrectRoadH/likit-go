@@ -24,6 +24,11 @@ type VoteResponse struct {
 	Count  int64 `json:"count"`
 }
 
+type ErrorResponse struct {
+	Status  int    `json:"status"`
+	Message string `json:"msg"`
+}
+
 func (s *VoteServer) Vote(ctx context.Context, businessId string, messageId string, userId string) (int64, error) {
 	body := struct {
 		BusinessId string `json:"businessId"`
@@ -57,7 +62,14 @@ func (s *VoteServer) Vote(ctx context.Context, businessId string, messageId stri
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := ioutil.ReadAll(resp.Body)
-		return 0, fmt.Errorf(string(body))
+
+		var errorResponse ErrorResponse
+		err = json.Unmarshal(body, &errorResponse)
+		if err != nil {
+			return 0, err
+		}
+
+		return 0, fmt.Errorf(errorResponse.Message)
 	}
 
 	// get value from response
@@ -110,7 +122,14 @@ func (s *VoteServer) UnVote(ctx context.Context, businessId string, messageId st
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := ioutil.ReadAll(resp.Body)
-		return 0, fmt.Errorf(string(body))
+
+		var errorResponse ErrorResponse
+		err = json.Unmarshal(body, &errorResponse)
+		if err != nil {
+			return 0, err
+		}
+
+		return 0, fmt.Errorf(errorResponse.Message)
 	}
 
 	// get value from response
