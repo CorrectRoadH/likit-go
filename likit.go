@@ -24,6 +24,11 @@ type VoteResponse struct {
 	Count  int64 `json:"count"`
 }
 
+type IsVoteResponse struct {
+	Status int  `json:"status"`
+	IsVote bool `json:"isVote"`
+}
+
 type ErrorResponse struct {
 	Status  int    `json:"status"`
 	Message string `json:"msg"`
@@ -178,5 +183,30 @@ func (s *VoteServer) Count(ctx context.Context, businessId string, messageId str
 }
 
 func (s *VoteServer) IsVote(ctx context.Context, businessId string, messageId string, userId string) (bool, error) {
-	return true, nil
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/isVoted/%s/%s/%s", s.host, businessId, messageId, userId), nil)
+	if err != nil {
+		return false, err
+	}
+
+	// get response
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false, err
+	}
+	defer resp.Body.Close()
+
+	// get value from response
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return false, err
+	}
+
+	var voteResponse IsVoteResponse
+	err = json.Unmarshal(body, &voteResponse)
+	if err != nil {
+		return false, err
+	}
+
+	return voteResponse.IsVote, nil
 }
