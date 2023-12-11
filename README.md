@@ -20,7 +20,10 @@ func NewCommentServer(store *store.CommentStore) *CommentServer {
 	return &CommentServer{
 		Store:      store,
         // the likit server address. You should replace it with your own server address
-		voteServer: likit.NewVoteServer("https://likit.zeabur.app"), 
+		// likit.NewVoteServer("localhost:4778",false), 
+		voteServer: likit.NewVoteServer("likit.zeabur.app:443",true), 
+		// NewVoteServer(host string, tls bool)
+		// if you deploy likit server in zeabur. tls shoud be true
 	}
 }
 
@@ -49,7 +52,7 @@ func (s *CommentServer) ListComment(c echo.Context)  error {
 }
 
 func (s *CommentServer) Like(c echo.Context) (*apiv1pb.LikeResponse, error) {
-    userId := /// get user id from jwt or cookie
+	userId := /// get user id from jwt or cookie
 	commentId := /// get comment id from request
 
 	count, err := s.voteServer.Vote(ctx, businessId, commentId, UserId)

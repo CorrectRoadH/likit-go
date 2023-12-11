@@ -24,7 +24,7 @@ func randomName() string {
 }
 func TestVote(t *testing.T) {
 	// create vote server
-	voteServer := likit.NewVoteServer("localhost:4778")
+	voteServer := likit.NewVoteServer("likit-grpc.zeabur.app:443", true)
 
 	// random messageId
 	messageId := randomName()
@@ -40,7 +40,7 @@ func TestVote(t *testing.T) {
 
 func TestIsVotd(t *testing.T) {
 	// create vote server
-	voteServer := likit.NewVoteServer("localhost:4778")
+	voteServer := likit.NewVoteServer("192.168.20.233:4778", false)
 
 	// random messageId
 	messageId := randomName()

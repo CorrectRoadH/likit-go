@@ -7,17 +7,28 @@ import (
 	v1 "buf.build/gen/go/likit/likit/protocolbuffers/go/api/v1"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type VoteServer struct {
 	voteClient apiv1grpc.VoteServiceClient
 }
 
-func NewVoteServer(host string) *VoteServer {
-	conn, err := grpc.Dial(host, grpc.WithInsecure())
-	if err != nil {
-		panic(err)
+func NewVoteServer(host string, tls bool) *VoteServer {
+	var conn *grpc.ClientConn
+	var err error
+	if tls {
+		conn, err = grpc.Dial(host, grpc.WithTransportCredentials(credentials.NewTLS(nil)))
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		conn, err = grpc.Dial(host, grpc.WithInsecure())
+		if err != nil {
+			panic(err)
+		}
 	}
+
 	client := apiv1grpc.NewVoteServiceClient(conn)
 	return &VoteServer{
 		voteClient: client,
