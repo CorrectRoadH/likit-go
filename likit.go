@@ -10,11 +10,11 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-type VoteServer struct {
-	voteClient apiv1grpc.VoteServiceClient
+type LikitServer struct {
+	grpcClient apiv1grpc.VoteServiceClient
 }
 
-func NewVoteServer(host string, tls bool) *VoteServer {
+func NewLikitServer(host string, tls bool) *LikitServer {
 	var conn *grpc.ClientConn
 	var err error
 	if tls {
@@ -30,8 +30,8 @@ func NewVoteServer(host string, tls bool) *VoteServer {
 	}
 
 	client := apiv1grpc.NewVoteServiceClient(conn)
-	return &VoteServer{
-		voteClient: client,
+	return &LikitServer{
+		grpcClient: client,
 	}
 }
 
@@ -50,8 +50,8 @@ type ErrorResponse struct {
 	Message string `json:"msg"`
 }
 
-func (s *VoteServer) Vote(ctx context.Context, businessId string, messageId string, userId string) (int64, error) {
-	resp, err := s.voteClient.Vote(ctx, &v1.VoteRequest{
+func (s *LikitServer) Vote(ctx context.Context, businessId string, messageId string, userId string) (int64, error) {
+	resp, err := s.grpcClient.Vote(ctx, &v1.VoteRequest{
 		BusinessId: businessId,
 		MessageId:  messageId,
 		UserId:     userId,
@@ -62,8 +62,8 @@ func (s *VoteServer) Vote(ctx context.Context, businessId string, messageId stri
 	return resp.Count, nil
 }
 
-func (s *VoteServer) UnVote(ctx context.Context, businessId string, messageId string, userId string) (int64, error) {
-	resp, err := s.voteClient.UnVote(ctx, &v1.VoteRequest{
+func (s *LikitServer) UnVote(ctx context.Context, businessId string, messageId string, userId string) (int64, error) {
+	resp, err := s.grpcClient.UnVote(ctx, &v1.VoteRequest{
 		BusinessId: businessId,
 		MessageId:  messageId,
 		UserId:     userId,
@@ -74,8 +74,8 @@ func (s *VoteServer) UnVote(ctx context.Context, businessId string, messageId st
 	return resp.Count, nil
 }
 
-func (s *VoteServer) Count(ctx context.Context, businessId string, messageId string) (int64, error) {
-	resp, err := s.voteClient.Count(ctx, &v1.CountRequest{
+func (s *LikitServer) Count(ctx context.Context, businessId string, messageId string) (int64, error) {
+	resp, err := s.grpcClient.Count(ctx, &v1.CountRequest{
 		BusinessId: businessId,
 		MessageId:  messageId,
 	})
@@ -85,8 +85,8 @@ func (s *VoteServer) Count(ctx context.Context, businessId string, messageId str
 	return resp.Count, nil
 }
 
-func (s *VoteServer) IsVote(ctx context.Context, businessId string, messageId string, userId string) (bool, error) {
-	resp, err := s.voteClient.IsVoted(ctx, &v1.IsVotedRequest{
+func (s *LikitServer) IsVote(ctx context.Context, businessId string, messageId string, userId string) (bool, error) {
+	resp, err := s.grpcClient.IsVoted(ctx, &v1.IsVotedRequest{
 		BusinessId: businessId,
 		MessageId:  messageId,
 		UserId:     userId,
@@ -97,8 +97,8 @@ func (s *VoteServer) IsVote(ctx context.Context, businessId string, messageId st
 	return resp.IsVoted, nil
 }
 
-func (s *VoteServer) VotedUsers(ctx context.Context, businessId string, messageId string) ([]string, error) {
-	resp, err := s.voteClient.VotedUsers(ctx, &v1.VotedUsersRequest{
+func (s *LikitServer) VotedUsers(ctx context.Context, businessId string, messageId string) ([]string, error) {
+	resp, err := s.grpcClient.VotedUsers(ctx, &v1.VotedUsersRequest{
 		BusinessId: businessId,
 		MessageId:  messageId,
 	})
