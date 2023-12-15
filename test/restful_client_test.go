@@ -40,7 +40,7 @@ func TestVote(t *testing.T) {
 
 func TestIsVotd(t *testing.T) {
 	// create vote server
-	voteServer := likit.NewLikitServer("likit-grpc.zeabur.app:443", false)
+	voteServer := likit.NewLikitServer("likit-grpc.zeabur.app:443", true)
 
 	// random messageId
 	messageId := randomName()
